@@ -1,0 +1,402 @@
+<!DOCTYPE HTML>
+<head>
+  <title>Added Weight Worksheet v1.0</title>
+  <style><!--
+    @page {
+        size: letter landscape;
+        margin: 7px 40px 2px 40px;
+        padding: 0px; }
+    @media print {
+        .pagebody {  }
+        .noprint { display: none; }
+    }
+    body {
+        counter-reset: page 0; }
+    table	{
+        width: 1247px;
+        height: 200px;
+        border: 0px solid black;
+        vertical-align: middle; }
+    td	{
+        height: 30px;
+        width: 150px;
+        border: 0px solid black;
+        padding-top:1px;
+        padding-right:1px;
+        padding-left:1px;
+        color:windowtext;
+        font-size:9pt;
+        font-weight:350;
+        font-style:normal;
+        text-decoration:none;
+        font-family:Verdana,Helvetica;
+        text-align:general;
+        vertical-align:bottom;}
+    th	{
+        height: 30px;
+        width: 200px;
+        border: 0px solid black;
+        padding-top:1px;
+        padding-right:1px;
+        padding-left:1px;
+        color:windowtext;
+        font-size:10pt;
+        font-family:Verdana,Helvetica;
+        text-align:general;
+        vertical-align:bottom;}
+    li  {
+        margin-left: 21px;
+        text-indent: -21px;
+        font-size:11pt;
+        list-style-type: none;}
+    input {
+    	background-color:silver;
+        color:black;
+        border: 0px;
+        height: 37px;
+    	text-align: center;
+        font-size:10pt;
+        font-weight:350;
+        font-style:normal;
+        text-decoration:none;
+        font-family:Verdana,Helvetica;}
+    input:hover {
+    	background-color: skyblue; }
+
+
+    .list {
+        counter-reset: itemlist;}
+    .list li:before {
+        content: counter(itemlist, lower-alpha) ") ";
+        counter-increment: itemlist;}
+    .heavy, .bold	{
+        color:black;
+        font-size:10pt;
+        font-weight:700;
+        font-family:Verdana,Helvetica;
+        vertical-align: bottom;
+        white-space: nowrap; }
+    .tiny {
+    	font-size:6pt;}
+    .center {
+    	text-align:center;}
+    .QA {
+        outline: thin solid black;
+        vertical-align: middle;
+        white-space: nowrap; }
+    .single {
+        height: 15px; }
+    .double {
+        height: 30px; }
+    .header {
+        top: 0px;
+        height: 22px;
+        padding-top: 10px;
+        font-size: 9pt;
+        text-align: center;    }
+    .footer {
+        bottom: 0px;
+        height: 27px;
+        padding-top: 0px;
+        font-size: 9pt;
+        text-align: right; }
+
+--></style>
+  <script>
+	var printArray = {	rmid:[],
+						rmdesc:[],
+						rmlot:[],
+						rmkg:[],
+						rmmg:[] };
+
+	function initDivs() {
+		document.getElementById("OutputDisplay").style.display = 'none';
+		document.getElementById("Inputs").style.display = 'none';
+  	}
+
+	function verifyAssumptions() {
+		var alertmsg = "";
+
+	    fpid_obj = document.getElementById('fpidinput');
+		fpidcell_obj = document.getElementById('fpidcell');
+	    fplot_obj = document.getElementById('fplotinput');
+		fplotcell_obj = document.getElementById('fplotcell');
+		runsize_obj = document.getElementById('runsizeinput');
+		runsizecell_obj = document.getElementById('runsizecell');
+		capwshell_obj = document.getElementById('capwshellinput');
+		capwshellcell_obj = document.getElementById('capwshellcell');
+		shellwt_obj = document.getElementById('shellwtinput');
+		shellwtcell_obj = document.getElementById('shellwtcell');
+		fillweightcell_obj = document.getElementById('fillweightcell');
+		wsfillcell_obj = document.getElementById('wsfillcell');
+
+		if (fpid_obj.value.search(/([A-z]|\.)?[A-z][A-z]\w*\.\d\d+/i)<0) {
+			alertmsg = alertmsg + '\n -- ' + fpid_obj.value + " is an invalid Finished Product ID!\n";
+		}
+		if (fplot_obj.value.search(/^\d\d\d\d+00$/i)<0) {
+			alertmsg = alertmsg + '\n -- ' + fplot_obj.value + " is an invalid Finished Product Lot Number!\n";
+		}
+		if (isNaN(runsize_obj.value)) {
+		    alertmsg = alertmsg + '\n -- Run Size must be numeric!\n';
+		}
+		if (isNaN(capwshell_obj.value)) {
+			alertmsg = alertmsg + '\n -- Capsule Weight w/ Shell must be numeric!\n';
+		}
+		if (isNaN(shellwt_obj.value)) {
+		    alertmsg = alertmsg + '\n -- Shell Weight must be numeric!\n';
+		}
+		if ((capwshell_obj.value - shellwt_obj.value)<=0) {
+			alertmsg = alertmsg + '\n -- Capsule Weight w/ Shell needs to be greater than Shell Weight!\n';
+		}
+		if (alertmsg) {
+			alert("The following errors have occurred:\n" + alertmsg);
+			return(0);
+		}
+
+		fpidcell_obj.value = fpid_obj.value.toUpperCase();
+		fpidcell_obj.classList.add("bold","center");
+		fpidcell_obj.innerHTML = fpidcell_obj.value;
+
+		fplotcell_obj.value = fplot_obj.value;
+		fplotcell_obj.classList.add("bold","center");
+		fplotcell_obj.innerHTML = fplotcell_obj.value;
+
+		runsizecell_obj.value = runsize_obj.value;
+		runsizecell_obj.classList.add("bold","center");
+		runsizecell_obj.innerHTML = runsizecell_obj.value + " Kg";
+
+		capwshellcell_obj.value = capwshell_obj.value;
+		capwshellcell_obj.classList.add("bold","center");
+		capwshellcell_obj.innerHTML = capwshellcell_obj.value + " mg";
+
+		shellwtcell_obj.value = shellwt_obj.value;
+		shellwtcell_obj.classList.add("bold","center");
+		shellwtcell_obj.innerHTML = shellwt_obj.value + " mg";
+
+		fillweightcell_obj.value = (capwshell_obj.value - shellwt_obj.value);
+		fillweightcell_obj.classList.add("bold","center");
+		fillweightcell_obj.innerHTML = fillweightcell_obj.value + " mg";
+
+		wsfillcell_obj.innerHTML = "<br>(Based on fill weight of " + fillweightcell_obj.value + " mg)";
+
+		Inputs_obj = document.getElementById("Inputs");
+		Inputs_obj.style.display = 'block';
+
+		clearAdd();
+	}
+
+	function clearAdd() {
+		rmrow_obj = document.getElementById('rminputrow');
+		rmrow_obj.innerHTML = "<td name='rawidcell' align='center'><input type='text' id='rawidinput'></td><td name='rawdesccell' align='center'><input type='text' id='rawdescinput'></td><td name='rawlotcell' align='center'><input type='text' id='rawlotinput'></td><td id='addmgcell' align='center'><input type='text' id='addmginput' onchange='calcpct();'></td><td id='addpctcell' align='center'><input type='text' id='addpctinput' onchange='calcmg();'></td><td id='addkgcell' align='center'>&nbsp;</td><td style='white-space:nowrap;' align='center'><input type='button' name='addbutton' value='Add' onclick='verifyAdd();'>&nbsp;<input type='button' name='clrbutton' value='Clear' onclick='clearAdd();'></td>"
+	}
+
+	function verifyAdd() {
+		var alertmsg = "";
+		rawidinput_obj = document.getElementById('rawidinput');
+		rawdescinput_obj = document.getElementById('rawdescinput');
+		rawlotinput_obj = document.getElementById('rawlotinput');
+		addmgcell_obj = document.getElementById('addmgcell');
+		addmginput_obj = document.getElementById('addmginput');
+		addpctcell_obj = document.getElementById('addpctcell');
+		addkgcell_obj = document.getElementById('addkgcell');
+		arraysize = printArray.rmid.length;
+
+		if (rawidinput_obj.value.search(/^(([A-z]|99)\.)?\d\d\d\d\d\d$/)<0) {
+			alertmsg = alertmsg + "\n -- " + rawidinput_obj.value + " is an invalid Raw Material ID!";
+		}
+		if (!rawdescinput_obj.value) {
+			alertmsg = alertmsg + "\n -- You must enter a Raw Material Description!";
+		}
+		if (!rawlotinput_obj.value) {
+			alertmsg = alertmsg + "\n -- You must enter a Raw Material Lot Number!";
+		}
+		if (isNaN(addmgcell_obj.value) && isNaN(addpctcell_obj.value)) {
+			alertmsg = alertmsg + "\n -- You must enter a value in 'mg to add' or '% to add' fields!";
+		}
+		if (alertmsg) {
+			alert("The following errors have occurred:\n" + alertmsg);
+			return(0);
+		}
+
+		printArray.rmid[arraysize] = rawidinput_obj.value;
+		printArray.rmdesc[arraysize] = rawdescinput_obj.value;
+		printArray.rmlot[arraysize] = rawlotinput_obj.value;
+		printArray.rmkg[arraysize] = addkgcell_obj.value;
+		if (isNaN(addmgcell_obj.value)) {
+			printArray.rmmg[arraysize] = addmginput_obj.value;
+		} else {
+			printArray.rmmg[arraysize] = addmgcell_obj.value;
+		}
+
+		display_Output();
+		clearAdd();
+	}
+
+	function display_Output() {
+		var today = new Date();
+		Outputdiv_obj = document.getElementById("OutputDisplay");
+		Outputdiv_obj.style.display = 'none';
+		Outputdiv_obj.style.height = '950px';
+		Outputrows_obj = document.getElementById("outputrows");
+
+		document.getElementById("headdiv").innerHTML = 'Added Weight Worksheet for ' + document.getElementById('fpidcell').value + ' Lot # ' + document.getElementById('fplotcell').value;
+		document.getElementById("footdiv").innerHTML = 'Added Weight Worksheet v1.0 printed ' + today.toLocaleDateString() + ' ' + today.toLocaleTimeString();
+
+		rowmarkup = "<tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr>";
+
+		rowmarkup = rowmarkup + "<tr class='double'><th colspan='1' class='QA'>Raw Material</th><th colspan='3' class='QA'>Description</th><th colspan='1' class='QA'>Lot #</th><th colspan='1' class='QA'>Kg added</th><th colspan='1' class='QA'>mg per unit</th><th colspan='4' class='QA'>Purpose</th><th colspan='1' class='QA'>Pre QC by</th><th colspan='1' class='QA'>Added by</th><th colspan='1' class='QA'>Blended by</th><th colspan='1' class='QA'>Posted by</th></tr>";
+
+		for (var i=0;i<printArray.rmid.length;i++) {
+			rowmarkup = rowmarkup + "<tr style='height:37px'><td colspan='1' class='QA center'>" + printArray.rmid[i] + "</td><td colspan='3' class='QA center'>" + printArray.rmdesc[i] + "</td><td colspan='1' class='QA center'>" + printArray.rmlot[i] + "</td><td colspan='1' class='QA center'>" + printArray.rmkg[i] + " Kg</td><td colspan='1' class='QA center'>" + printArray.rmmg[i] + " mg</td><td colspan='4' class='QA center'>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</td><td colspan='1' class='QA center'>&nbsp;</td><td colspan='1' class='QA center'>&nbsp;</td><td colspan='1' class='QA center'>&nbsp;</td><td colspan='1' class='QA center'>&nbsp;</td></tr>";
+		}
+		Outputrows_obj.innerHTML = rowmarkup;
+		Outputdiv_obj.style.display = 'block';
+	}
+
+	function calcpct() {
+		runsize_obj = document.getElementById('runsizecell');
+		fillweight_obj = document.getElementById('fillweightcell');
+		addmg_obj = document.getElementById('addmginput');
+		addmgcell_obj = document.getElementById('addmgcell');
+		addpct_obj = document.getElementById('addpctinput');
+		addpctcell_obj = document.getElementById('addpctcell');
+		addkgcell_obj = document.getElementById('addkgcell');
+
+		addpctcell_obj.value = round(addmg_obj.value/fillweight_obj.value*100,1);
+		addpctcell_obj.classList.add("bold","center");
+		addpctcell_obj.innerHTML = addpctcell_obj.value + "%";
+
+		addkgcell_obj.value = round(runsize_obj.value * addmg_obj.value / fillweight_obj.value,3);
+		addkgcell_obj.classList.add("bold","center");
+		addkgcell_obj.innerHTML = addkgcell_obj.value + " Kg";
+	}
+
+	function calcmg() {
+		runsize_obj = document.getElementById('runsizecell');
+		fillweight_obj = document.getElementById('fillweightcell');
+		addmg_obj = document.getElementById('addmginput');
+		addmgcell_obj = document.getElementById('addmgcell');
+		addpct_obj = document.getElementById('addpctinput');
+		addpctcell_obj = document.getElementById('addpctcell');
+		addkgcell_obj = document.getElementById('addkgcell');
+
+		addmgcell_obj.value = round(fillweight_obj.value * addpct_obj.value/100,1);
+		addmgcell_obj.classList.add("bold","center");
+		addmgcell_obj.innerHTML = addmgcell_obj.value + " mg";
+
+		addkgcell_obj.value = round(runsize_obj.value * addmgcell_obj.value / fillweight_obj.value,3);
+		addkgcell_obj.classList.add("bold","center");
+		addkgcell_obj.innerHTML = addkgcell_obj.value + " Kg";
+	}
+
+	function printpage() {
+		document.getElementById("Assumptions").style.display = 'none';
+		document.getElementById("Inputs").style.display = 'none';
+		window.print();
+	}
+
+	function round(num,precision) {
+		var result = Math.round(num * Math.pow(10,precision))/Math.pow(10,precision);
+		return result;
+	}
+
+	</script>
+</head>
+
+<body onLoad="initDivs();">
+<H3 class="noprint">Added Weight Worksheet v1.0</H3>
+  <table id="Assumptions" class="noprint" style="display: block; visibility: visible;">
+    <tbody>
+    <tr><th class="QA">Finished Prod ID</th><td id="fpidcell"><input type="text" id="fpidinput"></td></tr>
+    <tr><th class="QA">Finished Prod Lot #</th><td id="fplotcell"><input type="text" id="fplotinput"></td></tr>
+    <tr><th class="QA">Run Size (Kg)</th><td id="runsizecell"><input type="text" id="runsizeinput"></td></tr>
+    <tr><th class="QA">Capsule Weight<br>(with shell)(mg)</th><td id="capwshellcell"><input type="text" id="capwshellinput"></td></tr>
+    <tr><th class="QA">Shell Weight (mg)</th><td id="shellwtcell"><input type="text" id="shellwtinput"></td></tr>
+    <tr><th>Fill Weight (calculated)(mg)</th><th id="fillweightcell"><input type="button" name="fillweightinput" value="Calculate" onclick="verifyAssumptions();"></th></tr>
+    </tbody>
+  </table>
+  <br />
+  <br />
+  <table id="Inputs" class="noprint" style="display: block; visibility: visible;">
+    <tbody>
+    <tr><th class="QA">Raw Material ID</th><th class="QA">Raw Material<br>Description</th><th class="QA">Lot #</th><th class="QA">mg to add</th><th class="QA">% to add<span id="wsfillcell" class="tiny"><br>(Based on starting fill weight)</span></th><th class="QA">Kg to add<br>(calculated)</th><td>&nbsp;</td></tr>
+    <tr id="rminputrow"></tr>
+    </tbody>
+  </table>
+
+  <div id='OutputDisplay' style="display: block; visibility: visible;">
+    <hr align=center width=95% class="noprint">
+      <input type="button" value="Print" onclick="printpage();" class="noprint" />
+      <input type="button" value="Exit" onclick="location.reload();" class="noprint" />
+      <header id="headdiv" class="header">&nbsp;</header>
+      <br />
+      <br />
+      <table class="PrintDisplay" style="display: block; visibility: visible;">
+      <tr class="double"><td colspan="18" align="center"><span style="font: bold 18pt Times, serif">Added Weight Worksheet</span></td></tr>
+<!-- <tr class="double">
+  <td colspan="18" align="left" class="heavy">Encapsulation Area Clean Check</td>
+ </tr>
+ <tr class='single'><td colspan='18'>&nbsp;</td></tr>
+ <tr class="double">
+  <td colspan="5">Equipment #_______ Cleaned</td>
+  <td colspan="2" align="center"><span style="border: black solid 1px">&nbsp;&nbsp;&nbsp;&nbsp;</span></td>
+  <td colspan="5" align="right">Date:&nbsp;_________</td>
+  <td colspan="2" align="right">Time:&nbsp;________<span style="font-weight: 350; font-size: 10px;">&nbsp;am/pm</span></td>
+  <td colspan="2" align="right">Initials:&nbsp;_________</td>
+  <td colspan="2" align="right">MF-219</td>
+ </tr>
+ <tr class="double">
+  <td colspan="5">Room #_______ Cleaned</td>
+  <td colspan="2" align="center"><span style="border: black solid 1px">&nbsp;&nbsp;&nbsp;&nbsp;</span></td>
+  <td colspan="5" align="right">Date:&nbsp;_________</td>
+  <td colspan="2" align="right">Time:&nbsp;________<span style="font-weight: 350; font-size: 10px;">&nbsp;am/pm</span></td>
+  <td colspan="2" align="right">Initials:&nbsp;_________</td>
+  <td colspan="2" align="right">MF-219</td>
+ </tr>
+ <tr class="double">
+  <td colspan="5">Previously Allergen Tested?</td>
+  <td colspan="1" align="center">Yes</td>
+  <td colspan="1" align="center">N/A</td>
+  <td colspan="11" align="right">QA-498</td>
+ </tr>
+ <tr class="double">
+  <td colspan="5">Correct Capsule Size and type?</td>
+  <td colspan="1" align="center">Yes</th>
+  <td colspan="1" align="center">No</th>
+  <td colspan="11">&nbsp;</td>
+ </tr>
+ <tr class='single'><td colspan='18'>&nbsp;</td></tr>
+ <tr class="double">
+  <td colspan="5" class="heavy">QC/Supervisor Approval</td>
+  <td colspan="4">&nbsp;</td>
+  <td colspan="3" align="right" class="heavy">Date:&nbsp;_________</td>
+  <td colspan="3" align="right" class="heavy">Time:&nbsp;________<span style="font-weight: 350; font-size: 10px;">&nbsp;am/pm</span></td>
+  <td colspan="3" align="right" class="heavy">Initials:&nbsp;_________</td>
+ </tr>
+ <tr class='single'><td colspan='18'>&nbsp;</td></tr>
+ <tr class='single'><td colspan='18'>&nbsp;</td></tr>
+ <tr class='single'><td colspan='18'>&nbsp;</td></tr>
+ <tr class="single">
+  <td colspan="5" class="heavy">Excipients Added</td>
+  <td colspan="13">&nbsp;</td>
+ </tr>
+ <tr class='single'><td colspan='18'>&nbsp;</td></tr>
+ <tr class="single">
+  <td colspan="18" class="heavy" style="vertical-align: top"><b>Formulas:</b></td></tr>
+ </tr>
+ <tr class="double">
+  <td colspan="7"><li style="list-style: disc inside"><b>Total Kg Added</b> = mg Per Unit Added X total capsules</li>
+  <li style="list-style: disc inside"><b>mg Per Unit Added</b> = Total Kg Added &divide; total capsules</li></td>
+  <td colspan="11">&nbsp;</td>
+ </tr>
+ <tr class='single'><td colspan='18'>&nbsp;</td></tr>
+ -->
+ <tbody id="outputrows">
+ </tbody>
+  </table>
+  </div>
+  <footer id="footdiv" class="footer" style="page-break-after: always;">&nbsp;</footer>
+  </body>
+
+
+
